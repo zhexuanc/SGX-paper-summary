@@ -1,6 +1,5 @@
 # OpenSGX: An Open Platform for SGX Research
-Prerit Jain   Soham Desai   Seongmin Kim   Ming-Wei Shih   JaeHyuk Lee
-Changho Choi   Youjung Shin  Taesoo Kim   Brent Byunghoon   Kang Dongsu Han
+###### Prerit Jain, Soham Desai, Seongmin Kim, Ming-Wei Shih, JaeHyuk Lee, Changho Choi, Youjung Shin, Taesoo Kim, Brent Byunghoon, Kang Dongsu Han
 
 **What's the problem?**
 * Trusted execution environment has rapidly matured over last decade, for example the Intel SGX. However, software technology lag behind the hardware part.
