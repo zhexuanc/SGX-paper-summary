@@ -2,25 +2,24 @@
 ###### Tyler Hunt, Zhiting Zhu, Yuanzhong Xu, Simon Peter, Emmett Witchel
 
 **What's the problem?**
-* In multi-tenant environments, Linux container's weaker isolation guarantees, enforced through software kernel mechanisms, make it easier for attackers to compromise the confidentiality and integrity of application data within containers.
+* Users of modern data-processing services such as tax preparation or genomic screening are forced to trust them with data that the users wish to keep secret. Accomplishing this goal in a distributed setting is difficult because the user has no control over the service providers or the computational platform. Confining code to prevent it from leaking secrets is notoriously difficult.
 
 **Summary**
-* Describe SCONE, a secure container mechanism for Docker that uses the SGX trusted execution support of Intel CPUs to protect container processes from outside attacks. SCONE offers a secure C standard library interface that transparently encrypts/decrypts I/O data; to reduce the performance impact of thread synchronization and system calls within SGX enclaves, SCONE supports user-level threading and asynchronous system calls.
+* Ryoan provides a distributed sandbox, leveraging hardware enclaves (Intel SGX) to protect sandbox instances from potentially malicious computing platforms. The protected sandbox instances confine untrusted data-processing modules to prevent leakage of the user’s input data. Ryoan is designed for a request-oriented data model, where confined modules only process input once and do not persist state about the input.
 
 **Key insight**
-* The design of a secure container mechanism using SGX raises two challenges: (i) minimizing the size of the trusted computing base (TCB) inside an enclave while supporting existing applications in secure containers; and (ii) maintaining a low performance overhead for secure containers, given the restrictions of SGX.
+* Ryoan has a new hardware primitive that uses trusted hardware to protect a user-level computation from potentially malicious privileged software. The processor hardware keeps unencrypted data on chip, but encrypts data when it moves into RAM. The hypervisor and operating system retain their ability to manage memory, but privileged software sees only an encrypted version of the data that is protected from tampering by a cryptographic hash. 
 
 **Notable design details**
-* SCONE exposes an external interface based on system calls to the host OS, which is shielded from attacks. To protect the integrity and confidentiality of data processed via file descriptors, SCONE supports transparent encryption and authentication of data through shields.
-* SCONE implements M:N threading to avoid the cost of unnecessary enclave translations.
-* SCONE offers container processes an asynchronous system call interface to the host OS. Hence, the threads inside the enclave do not have to exit when performing system calls.
+* Ryoan adapts previous label-based systems to enable multiple mutually distrustful modules to cooperate on sensitive data. Ryoan uses secrecy labels to mark secret data and enclaves which have seen that secret data.
+* Ryoan's confined environment's most important service is an in-memory virtual file system. For each unit of work, a module calls wait for work (a system service implemented by Ryoan), and the Ryoan instance reads its entire input from all input channels into memory buffers before returning to the module. 
 
 **Limitation**
-* Intel SGX limitations still exists on SCONE, because the experimental evaluation of SCONE is built on SGX hardware.
+* Intel SGX hardware security limitations still exists on Ryoan, such as SGX page fault, cache timing, address bus monitoring and processor monitoring.
 
 **Summary of the key results**
-* SCONE increases the confidentiality and integrity of containerized services using Intel SGX. The secure containers of SCONE feature a TCB of only 0.6–2 times the application code size and are compatible with Docker. Using asynchronous system calls and a kernel module, SGX-imposed enclave transition overheads are reduced effectively.
-* At the same time, SCONE does not require changes to applications or the Linux kernel besides static recompilation of the application and the loading of a kernel module.
+* Ryoan allows users to safely process their secret data with software they do not trust, executing on a platform they do not control, thereby benefiting users, data processing services, and computational platforms.
+* Ryoan’s checkpoint-based reset is much more efficient than DSPAM and ClamAV, and the per-unit cost is under 10ms.
 
 **Open questions**
-* Other similar container like FlexSC batches system calls, reducing user/kernel transitions. In SCONE, application threads place system calls into a shared queue instead, which permits the OS threads to switch to other threads and stay inside the enclave, which fulfill asychronous system calls.
+* A company can use Ryoan to outsource email filtering and scanning while keeping email text secret. Also, Ryoan can be used in personal health analysis and image processing. What's more, a company uses Ryoan to provide a machine translation service while keeping the uploaded text secret.
