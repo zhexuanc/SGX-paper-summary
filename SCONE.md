@@ -1,27 +1,26 @@
-# OpenSGX: An Open Platform for SGX Research
-###### Prerit Jain, Soham Desai, Seongmin Kim, Ming-Wei Shih, JaeHyuk Lee, Changho Choi, Youjung Shin, Taesoo Kim, Brent Byunghoon, Kang Dongsu Han
+# SCONE: Secure Linux Containers with Intel SGX
+###### Sergei Arnautov, Bohdan Trach, Franz Gregor, Thomas Knauth, Andre Martin, Christian Priebe, Joshua Lind, Divya Muthukumaran, Dan O’Keeffe, Mark L Stillwell, David Goltzsche, David Eyers, Ru ̈diger Kapitza, Peter Pietzuch, and Christof Fetzer
 
 **What's the problem?**
-* Trusted execution environment has rapidly matured over last decade, for example the Intel SGX. However, software technology lag behind the hardware part.
+* In multi-tenant environments, Linux container's weaker isolation guarantees, enforced through software kernel mechanisms, make it easier for attackers to compromise the confidentiality and integrity of application data within containers.
 
 **Summary**
-* Establish the first open platform for SGX research adn development, and it is an initial exploration of system support, interface design and the security issues involving system calls and user library for SGX programming. Also, applying OpenSGX to Tor nodes to isolate sensitive information and evaluate its potential performance implications.
+* Describe SCONE, a secure container mechanism for Docker that uses the SGX trusted execution support of Intel CPUs to protect container processes from outside attacks. SCONE offers a secure C standard library interface that transparently encrypts/decrypts I/O data; to reduce the performance impact of thread synchronization and system calls within SGX enclaves, SCONE supports user-level threading and asynchronous system calls.
 
 **Key insight**
-* Using QEMU to implement OpenSGX's OS emulation layer and hardware emulation such as SGX instructions. It provides a rich development environment allowing the research community to easily emulate a program running inside an enclave.
+* The design of a secure container mechanism using SGX raises two challenges: (i) minimizing the size of the trusted computing base (TCB) inside an enclave while supporting existing applications in secure containers; and (ii) maintaining a low performance overhead for secure containers, given the restrictions of SGX.
 
 **Notable design details**
-* OpenSGX supports instruction-level compatibility to SGX-aware binaries by implementing the core Intel SGX instructions.
-* To enforce EPC access protection, OpenSGX interposes every single memory access and checks the execution context and the corresponding access permission.
-* OpenSGX user library provides a dedicated communication channel between an enclave and its host.
+* SCONE exposes an external interface based on system calls to the host OS, which is shielded from attacks. To protect the integrity and confidentiality of data processed via file descriptors, SCONE supports transparent encryption and authentication of data through shields.
+* SCONE implements M:N threading to avoid the cost of unnecessary enclave translations.
+* SCONE offers container processes an asynchronous system call interface to the host OS. Hence, the threads inside the enclave do not have to exit when performing system calls.
 
 **Limitation**
-* OpenSGX is not secure for any security-related projects.
-* Intel SGX has a very restricted set of the I/O channels, so that it is essential to establish a secure channel between users and the enclave program.
+* Intel SGX limitations still exists on SCONE, because the experimental evaluation of SCONE is built on SGX hardware.
 
 **Summary of the key results**
-* Developing a complete platform for SGX development that includes emulated hardware and operating system components, an enclave program loader, an OpenSGX user library, and debugging and performance monitoring support.
-* Our evaluation of OpenSGX demonstrates that it can run nontrivial applications, such as the Tor anonymity network, and new ideas can be easily implemented and evaluated as a proof-ofconcept using our framework.
+* SCONE increases the confidentiality and integrity of containerized services using Intel SGX. The secure containers of SCONE feature a TCB of only 0.6–2 times the application code size and are compatible with Docker. Using asynchronous system calls and a kernel module, SGX-imposed enclave transition overheads are reduced effectively.
+* At the same time, SCONE does not require changes to applications or the Linux kernel besides static recompilation of the application and the loading of a kernel module.
 
 **Open questions**
-* OpenSGX can be utilized or extended for easy development of Intel SGX such as toolchains or a library, precise profiling of SGX programs and the exploration of potential research opportunities beyond the software boundary that the Intel SGX can not flexibly enable.
+* Other similar container like FlexSC batches system calls, reducing user/kernel transitions. In SCONE, application threads place system calls into a shared queue instead, which permits the OS threads to switch to other threads and stay inside the enclave, which fulfill asychronous system calls.
