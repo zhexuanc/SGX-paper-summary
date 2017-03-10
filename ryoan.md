@@ -2,7 +2,7 @@
 ###### Tyler Hunt, Zhiting Zhu, Yuanzhong Xu, Simon Peter, Emmett Witchel
 
 **What's the problem?**
-* Users of modern data-processing services such as tax preparation or genomic screening are forced to trust them with data that the users wish to keep secret. Accomplishing this goal in a distributed setting is difficult because the user has no control over the service providers or the computational platform. Confining code to prevent it from leaking secrets is notoriously difficult.
+* Users of modern data-processing services such as tax preparation or genomic screening are forced to trust these services with data that the users wish to keep secret. Accomplishing this goal in a distributed setting is difficult because the user has no control over the service providers or the computational platform. Confining code to prevent it from leaking secrets is notoriously difficult.
 
 **Summary**
 * Ryoan provides a distributed sandbox, leveraging hardware enclaves (Intel SGX) to protect sandbox instances from potentially malicious computing platforms. The protected sandbox instances confine untrusted data-processing modules to prevent leakage of the user’s input data. Ryoan is designed for a request-oriented data model, where confined modules only process input once and do not persist state about the input.
