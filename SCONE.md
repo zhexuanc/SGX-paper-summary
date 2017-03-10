@@ -2,10 +2,10 @@
 ###### Sergei Arnautov, Bohdan Trach, Franz Gregor, Thomas Knauth, Andre Martin, Christian Priebe, Joshua Lind, Divya Muthukumaran, Dan O’Keeffe, Mark L Stillwell, David Goltzsche, David Eyers, Ru ̈diger Kapitza, Peter Pietzuch, and Christof Fetzer
 
 **What's the problem?**
-* In multi-tenant environments, Linux container's weaker isolation guarantees, enforced through software kernel mechanisms, make it easier for attackers to compromise the confidentiality and integrity of application data within containers.
+* In multi-tenant environments, Linux containers' weaker isolation guarantees, enforced through kernel mechanisms in software, make it easier for attackers to compromise the confidentiality and integrity of application data within containers.
 
 **Summary**
-* Describe SCONE, a secure container mechanism for Docker that uses the SGX trusted execution support of Intel CPUs to protect container processes from outside attacks. SCONE offers a secure C standard library interface that transparently encrypts/decrypts I/O data; to reduce the performance impact of thread synchronization and system calls within SGX enclaves, SCONE supports user-level threading and asynchronous system calls.
+* SCONE is a secure container mechanism for Docker that uses the SGX trusted execution support of Intel CPUs to protect container processes from outside attacks. SCONE offers a secure C standard library interface that transparently encrypts/decrypts I/O data; to reduce the performance impact of thread synchronization and system calls within SGX enclaves, SCONE supports user-level threading and asynchronous system calls.
 
 **Key insight**
 * The design of a secure container mechanism using SGX raises two challenges: (i) minimizing the size of the trusted computing base (TCB) inside an enclave while supporting existing applications in secure containers; and (ii) maintaining a low performance overhead for secure containers, given the restrictions of SGX.
@@ -15,7 +15,7 @@
 * SCONE implements M:N threading to avoid the cost of unnecessary enclave translations.
 * SCONE offers container processes an asynchronous system call interface to the host OS. Hence, the threads inside the enclave do not have to exit when performing system calls.
 
-**Limitation**
+**Limitations**
 * Intel SGX limitations still exists on SCONE, because the experimental evaluation of SCONE is built on SGX hardware.
 
 **Summary of the key results**
